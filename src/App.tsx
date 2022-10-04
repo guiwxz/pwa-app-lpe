@@ -1,25 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+import '@popperjs/core/dist/cjs/popper.js'
+import 'bootstrap/dist/js/bootstrap.min.js'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+import { BrowserRouter as Router, Routes , Route } from 'react-router-dom'
+
+import Menu from './components/Menu'
+import Home from './components/Home'
+
+import Products from './containers/products/products';
+import Sales from './containers/sales/sales';
+import Container from './components/Container';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Menu/>
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/produtos" element={<Products/>}/>
+          <Route path="/vendas" element={<Sales/>}/>
+        </Routes>
+      </Container>
+    </Router>
   );
 }
 
