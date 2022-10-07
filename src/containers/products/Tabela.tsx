@@ -39,8 +39,8 @@ const Tabela: React.FC<TabelaProps> = ({ setIsEdit }) => {
         <i className="bi bi-pencil-square"></i>
       </button>
       <Alert alert={alert} />
-      {productsList.length === 0 && <h3>Nenhum produto encontrado</h3>}
-      {productsList.length > 0 && (
+      {(!productsList || (productsList && productsList.length === 0)) && <h3>Nenhum produto encontrado</h3>}
+      {productsList && productsList.length > 0 && (
         <table className="table">
           <thead>
             <tr>

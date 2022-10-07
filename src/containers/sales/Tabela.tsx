@@ -54,7 +54,7 @@ const Tabela: React.FC<TabelaProps> = ({ setIsEdit }) => {
         <i className="bi bi-pencil-square"></i>
       </button>
       <Alert alert={alert} />
-      {salesList && salesList.length === 0 && <h3>Nenhuma venda encontrada</h3>}
+      {(!salesList || (salesList && salesList.length === 0)) && <h3>Nenhuma venda encontrada</h3>}
       {salesList && salesList.length > 0 && (
         <table className="table">
           <thead>
