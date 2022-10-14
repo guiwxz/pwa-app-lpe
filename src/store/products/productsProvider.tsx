@@ -1,6 +1,9 @@
 import React from 'react';
 import { AlertType, ResponseType } from '../types';
 import { ProductType, ProductsContextSchema } from './products.types';
+import { getAuth } from '../auth/auth';
+import { useNavigate } from 'react-router-dom';
+import { parseResponse } from '../../helpers/api';
 
 export const ProductsContext = React.createContext<ProductsContextSchema>(
   {} as ProductsContextSchema
@@ -14,13 +17,32 @@ const ProductsProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [editar, setEditar] = React.useState(false);
   const [product, setProduct] = React.useState<ProductType>({ codigo: 0, nome: "", cfop: '', preco: 0, qtde: 0 })
 
-  
+  let navigate = useNavigate();
 
+  
   const fetchProducts = async () => {
-    await fetch(`${process.env.REACT_APP_API_URL}/products`)
-      .then(response => response.json())
-      .then(({ data }: ResponseType<ProductType[]>) => setProductsList(data))
-      .catch(err => setAlert({ status: "", message: err }))
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/products`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": getAuth().token
+        }
+      })
+        .then(parseResponse)
+        .then(({ data }: ResponseType<ProductType[]>) => setProductsList(data))
+        .catch(err => setAlert({ status: "", message: err }))
+
+    } catch(err) {
+      setAlert({
+        status: "error",
+        message: err as string
+      })
+
+      window.location.reload();
+      navigate('/login', { replace: true });
+      
+    }
 
   }
 

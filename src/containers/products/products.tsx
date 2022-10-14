@@ -3,6 +3,7 @@ import Tabela from "./Tabela";
 import Form from "./Form";
 
 import ProductsProvider from "../../store/products/productsProvider";
+import { withAuth } from "../../store/auth/withAuth";
 
 const Products: React.FC = () => {
   const [isEdit, setIsEdit] = React.useState(false);
@@ -15,4 +16,4 @@ const Products: React.FC = () => {
   )
 }
 
-export default Products
+export default withAuth(Products);

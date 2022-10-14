@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuth } from '../auth/auth';
 import { AlertType, ResponseType } from '../types';
 import { SalesType, SalesContextSchema } from './sales.types';
 
@@ -22,12 +24,35 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     codigo_produto: 0,
   })
 
+  const navigate = useNavigate();
   
   const fetchSales = async () => {
-    await fetch(`${process.env.REACT_APP_API_URL}/sales`)
-      .then(response => response.json())
-      .then(({ data }: ResponseType<SalesType[]>) => setSalesList(data))
-      .catch(err => setAlert({ status: "", message: err }))
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/sales`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": getAuth().token
+        }
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Erro no código: ' + response.status)
+        })
+        .then(({ data }: ResponseType<SalesType[]>) => setSalesList(data))
+        .catch(err => setAlert({ status: "", message: err }))
+
+    } catch (err) {
+      setAlert({
+        status: "error",
+        message: err as string
+      })
+
+      window.location.reload();
+      navigate('/login', { replace: true });
+    }
 
   }
 

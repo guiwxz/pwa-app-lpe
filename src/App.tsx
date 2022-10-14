@@ -12,19 +12,26 @@ import Home from './components/Home'
 
 import Products from './containers/products/products';
 import Sales from './containers/sales/sales';
-import Container from './components/Container';
+import Login from './containers/login/login';
+
+import MenuPrivado from './components/MenuPrivado';
+import MenuPublico from './components/MenuPublico';
 
 function App() {
   return (
     <Router>
-      <Menu/>
-      <Container>
         <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/produtos" element={<Products/>}/>
-          <Route path="/vendas" element={<Sales/>}/>
+          <Route path="/" element={<MenuPublico />}>
+            <Route index element={<Home />} />
+            <Route path='/login' element={<Login />} />
+          </Route>
+          <Route path="/privado" element={<MenuPrivado />}>
+            <Route index element={<Home/>}/>
+            <Route path="produtos" element={<Products/>} />
+            <Route path="vendas" element={<Sales/>} />
+            <Route path="login" element={<Login />} />  
+          </Route>
         </Routes>
-      </Container>
     </Router>
   );
 }
