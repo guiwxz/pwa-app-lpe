@@ -28,7 +28,7 @@ const Tabela: React.FC<TabelaProps> = ({ setIsEdit }) => {
 
   React.useEffect(() => {
     fetchProducts();
-  }, [fetchProducts])
+  }, [])
 
   return (
     <div style={{ padding: '20px', width: '100%' }}>

@@ -20,7 +20,7 @@ export const getAuth = () => {
   //@ts-ignore
   if (decoded.exp <= Math.floor(new Date() / 1000)) {
     console.log('Token expirado');
-    //logout();
+    logout();
 
     return null;
   } else {
@@ -47,6 +47,6 @@ export const logout = () => {
   //limpando localstorage
   localStorage.setItem(NOMEAPP + '/autenticacao', JSON.stringify({
     auth: false,
-    toke: ""
+    token: ""
   }))
 }

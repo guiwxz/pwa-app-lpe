@@ -6,7 +6,7 @@ const MenuPrivado = () => {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
           <NavLink className="navbar-brand" aria-current="page" to="/privado">SISGEE</NavLink>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,8 +23,8 @@ const MenuPrivado = () => {
                     Manutenções
                   </a>
                   <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><NavLink className="dropdown-item" to="produtos">Predios</NavLink></li>
-                    <li><NavLink className="dropdown-item" to="vendas">Salas</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="produtos">Produtos</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="vendas">Vendas</NavLink></li>
                   </ul>
                 </li>
               }

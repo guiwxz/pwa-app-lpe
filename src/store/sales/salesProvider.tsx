@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { parseResponse } from '../../helpers/api';
 import { getAuth } from '../auth/auth';
 import { AlertType, ResponseType } from '../types';
 import { SalesType, SalesContextSchema } from './sales.types';
@@ -32,15 +33,10 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         method: 'GET',
         headers: {
           "Content-Type": "application/json",
-          "x-access-token": getAuth().token
+          "x-access-token": getAuth().token || null
         }
       })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error('Erro no código: ' + response.status)
-        })
+        .then(res => parseResponse(res, navigate))
         .then(({ data }: ResponseType<SalesType[]>) => setSalesList(data))
         .catch(err => setAlert({ status: "", message: err }))
 
@@ -50,36 +46,54 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         message: err as string
       })
 
-      window.location.reload();
-      navigate('/login', { replace: true });
+      // window.location.reload();
+      // navigate('/login', { replace: true });
     }
 
   }
 
   const fetchSale = async (codigo: number) => {
-    await fetch(`${process.env.REACT_APP_API_URL}/sales/${codigo}`)
-      .then(response => response.json())
-      .then(({ data }: ResponseType<SalesType>) => setSale({
-        ...data, 
-        //desconto: Number((100 - ((data?.valor_total / data?.valor) * 100)).toPrecision(2))
-      }))
-      .catch(err => setAlert({ status: "", message: err }))
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/sales/${codigo}`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": getAuth().token || null
+        }
+      })
+        .then(res => parseResponse(res, navigate))
+        .then(({ data }: ResponseType<SalesType>) => setSale({
+          ...data, 
+          //desconto: Number((100 - ((data?.valor_total / data?.valor) * 100)).toPrecision(2))
+        }))
+        .catch(err => setAlert({ status: "", message: err }))
+    } catch (err) {
+      setAlert({
+        status: "error",
+        message: err as string
+      })
+
+      // window.location.reload();
+      // navigate('/login', { replace: true });
+    }
+    
   }
 
   const insertSale = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(sale);
+
     try {
       await fetch(`${process.env.REACT_APP_API_URL}/sales`,
         {
           method: 'POST',
           headers: {
             "Content-Type": "application/json",
+            "x-access-token": getAuth().token || null
           },
           body: JSON.stringify(sale)
         }
       )
-      .then(response => response.json())
+      .then(res => parseResponse(res, navigate))
       .then(json => {
         setAlert({
           status: json.status,
@@ -90,20 +104,21 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           setEditar(true);
         }
       })
+      fetchSales();
 
     } catch(err: any) {
       setAlert({
         status: "error",
         message: err
       })
+      // window.location.reload();
+      // navigate('/login', { replace: true });
     }
 
-    fetchSales();
   }
 
   const updateSale = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(sale);
     
     try {
       await fetch(`${process.env.REACT_APP_API_URL}/sales/${sale.codigo}`,
@@ -111,11 +126,12 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           method: 'PUT',
           headers: {
             "Content-Type": "application/json",
+            "x-access-token": getAuth().token || null
           },
           body: JSON.stringify(sale)
         }
       )
-      .then(response => response.json())
+      .then(res => parseResponse(res, navigate))
       .then(json => {
         setAlert({
           status: json.status,
@@ -132,6 +148,8 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         status: "error",
         message: err
       })
+      // window.location.reload();
+      // navigate('/login', { replace: true });
     }
 
     fetchSales();
@@ -150,14 +168,21 @@ const SalesProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const deleteSale = async (codigo: number) => {
     if (window.confirm('Deseja remover este objeto?')) {
       try {
-        await fetch(`${process.env.REACT_APP_API_URL}/sales/${codigo}`,
-          { method: "DELETE" })
-          .then(response => response.json())
+        await fetch(`${process.env.REACT_APP_API_URL}/sales/${codigo}`, { 
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": getAuth().token || null
+          },
+        })
+          .then(res => parseResponse(res, navigate))
           .then(json => setAlert({ status: json.status, message: json.message }))
           fetchSales();
       } catch (err) {
-        console.log('Erro: ' + err)
         setAlert({ status: 'erro', message: err as string })
+
+        // window.location.reload();
+        // navigate('/login', { replace: true });
       }
     }
   }
